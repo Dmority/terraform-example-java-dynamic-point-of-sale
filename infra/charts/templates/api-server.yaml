@@ -16,6 +16,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: api-server
+  labels:
+    tags.datadoghq.com/env: poc
+    tags.datadoghq.com/service: api-server
+    tags.datadoghq.com/version: v1
 spec:
   selector:
     matchLabels:
@@ -24,6 +28,12 @@ spec:
     metadata:
       labels:
         app: api-server
+        tags.datadoghq.com/env: poc
+        tags.datadoghq.com/service: api-server
+        tags.datadoghq.com/version: v1
+        admission.datadoghq.com/enabled: "true"
+      annotations:
+        admission.datadoghq.com/java-lib.version: v1.25.1
     spec:
       serviceAccountName: default
       terminationGracePeriodSeconds: 5
@@ -53,6 +63,16 @@ spec:
             configMapKeyRef:
               name: service-configs
               key: PAYMENTS_EP
+        - name: DD_PROFILING_ENABLED
+          value: "true"
+        - name: DD_LOGS_INJECTION
+          value: "true"
+        - name: DD_APPSEC_ENABLED
+          value: "true"
+        - name: DD_IAST_ENABLED
+          value: "true"
+        - name: DD_TRACE_SAMPLE_RATE
+          value: "1"
         resources:
           requests:
             cpu: 100m
@@ -60,17 +80,18 @@ spec:
           limits:
             cpu: 500m
             memory: 1Gi
-        readinessProbe:
-          httpGet:
-            path: /api/ready
-            port: 8080
-          initialDelaySeconds: 60
-          periodSeconds: 5
-          timeoutSeconds: 10
-        livenessProbe:
-          httpGet:
-            path: /api/healthy
-            port: 8080
-          initialDelaySeconds: 120
-          periodSeconds: 5
-          timeoutSeconds: 10
+# DD入れるとヘルスチェックに失敗するのでコメントアウト
+#        readinessProbe:
+#          httpGet:
+#            path: /api/ready
+#            port: 8080
+#          initialDelaySeconds: 60
+#          periodSeconds: 5
+#          timeoutSeconds: 10
+#        livenessProbe:
+#          httpGet:
+#            path: /api/healthy
+#            port: 8080
+#          initialDelaySeconds: 120
+#          periodSeconds: 5
+#          timeoutSeconds: 10

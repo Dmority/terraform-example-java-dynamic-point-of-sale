@@ -1,0 +1,49 @@
+datadog:
+  apiKey: {{ .Values.datadog_apikey }}
+  appKey: {{ .Values.datadog_appkey }}
+  clusterName: {{ .Values.cluster_name }}
+
+  # 新しい `kubernetes_state_core` チェックを有効化。
+  kubeStateMetricsCore:
+    enabled: true
+  # kube-state-metrics チャートのデプロイを回避。
+  # 新しい `kubernetes_state_core` における kube-state-metrics のデプロイは不要。
+  kubeStateMetricsEnabled: false
+  leaderElection: true
+  collectEvents: true
+  logs:
+    enabled: true
+  apm:
+    enabled: true
+clusterAgent:
+  enabled: true
+  metricsProvider:
+    enabled: true
+agents:
+  rbac:
+    create: true
+  containers:
+    agent:
+      # Agent コンテナのリソース
+      resources:
+        requests:
+          cpu: 200m
+          memory: 256Mi
+
+    traceAgent:
+      # Trace Agent コンテナのリソース
+      resources:
+        requests:
+          cpu: 100m
+          memory: 200Mi
+
+    processAgent:
+      # Process Agent コンテナのリソース
+      resources:
+        requests:
+          cpu: 100m
+          memory: 200Mi
+  priorityClassCreate: true
+providers:
+  gke:
+    autopilot: true

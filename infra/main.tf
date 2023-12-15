@@ -132,6 +132,14 @@ resource "google_container_cluster" "jss_pos" {
   enable_autopilot    = true
   resource_labels     = var.labels
   deletion_protection = false
+  monitoring_config {
+    enable_components = [
+      "SYSTEM",
+      "API_SERVER",
+      "SCHEDULER",
+      "CONTROLLER_MANAGER",
+    ]
+  }
 
   cluster_autoscaling {
     auto_provisioning_defaults {
@@ -254,6 +262,18 @@ resource "helm_release" "jss_point_of_sale" {
   set {
     name  = "spanner_database"
     value = google_spanner_database.jss_pos.name
+  }
+  set {
+    name  = "datadog_apikey"
+    value = var.datadog_apikey
+  }
+  set {
+    name  = "datadog_appkey"
+    value = var.datadog_appkey
+  }
+  set {
+    name  = "cluster_name"
+    value = google_container_cluster.jss_pos.name
   }
 }
 

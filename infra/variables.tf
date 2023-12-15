@@ -45,3 +45,13 @@ variable "resource_name_suffix" {
   It shoud not end with a dash.
   EOT
 }
+
+variable "datadog_apikey" {
+  type        = string
+  description = "Datadog API key"
+}
+
+variable "datadog_appkey" {
+  type        = string
+  description = "Datadog APP key"
+}
